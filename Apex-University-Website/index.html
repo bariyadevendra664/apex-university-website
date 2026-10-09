@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Semester Manager | B.Tech CSE</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- App Container -->
+  <div class="app-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <div class="logo-text">
+            <h2>SemDesk <span class="badge-cse">CSE</span></h2>
+            <p>B.Tech Portal</p>
+          </div>
+        </div>
+        <button class="btn-close-sidebar" id="closeSidebarBtn" aria-label="Close Sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Student Mini Profile Card -->
+      <div class="sidebar-user-card">
+        <div class="user-avatar" id="sidebarAvatar">AS</div>
+        <div class="user-info">
+          <h4 id="sidebarStudentName">Aarav Sharma</h4>
+          <span class="user-sem" id="sidebarSemBadge">Semester 5 • CSE</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="sidebar-nav">
+        <ul>
+          <li>
+            <a href="#dashboard" class="nav-link active" data-target="dashboard">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#subjects" class="nav-link" data-target="subjects">
+              <i class="fa-solid fa-book-bookmark"></i>
+              <span>Subjects</span>
+              <span class="nav-count" id="navSubjectCount">0</span>
+            </a>
+          </li>
+          <li>
+            <a href="#attendance" class="nav-link" data-target="attendance">
+              <i class="fa-solid fa-clipboard-user"></i>
+              <span>Attendance</span>
+              <span class="nav-alert-dot" id="navAttendanceWarning" title="Low attendance alert" style="display:none;"></span>
+            </a>
+          </li>
+          <li>
+            <a href="#assignments" class="nav-link" data-target="assignments">
+              <i class="fa-solid fa-list-check"></i>
+              <span>Assignments</span>
+              <span class="nav-count badge-warning" id="navPendingAssignmentCount">0</span>
+            </a>
+          </li>
+          <li>
+            <a href="#study-planner" class="nav-link" data-target="study-planner">
+              <i class="fa-solid fa-calendar-check"></i>
+              <span>Study Planner</span>
+            </a>
+          </li>
+          <li>
+            <a href="#exams" class="nav-link" data-target="exams">
+              <i class="fa-solid fa-stopwatch-20"></i>
+              <span>Exams & Tests</span>
+              <span class="nav-count" id="navExamCount">0</span>
+            </a>
+          </li>
+          <li>
+            <a href="#marks" class="nav-link" data-target="marks">
+              <i class="fa-solid fa-calculator"></i>
+              <span>Marks & CGPA</span>
+            </a>
+          </li>
+          <li>
+            <a href="#notes" class="nav-link" data-target="notes">
+              <i class="fa-solid fa-note-sticky"></i>
+              <span>Study Notes</span>
+              <span class="nav-count" id="navNotesCount">0</span>
+            </a>
+          </li>
+          <li>
+            <a href="#profile" class="nav-link" data-target="profile">
+              <i class="fa-solid fa-id-badge"></i>
+              <span>Student Profile</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar Footer / Data Actions -->
+      <div class="sidebar-footer">
+        <button class="btn-sidebar-action" id="resetDemoBtn" title="Reset back to default demo CSE data">
+          <i class="fa-solid fa-rotate-right"></i>
+          <span>Reset Demo Data</span>
+        </button>
+        <button class="btn-sidebar-action" id="exportDataBtn" title="Export your data to a JSON backup file">
+          <i class="fa-solid fa-download"></i>
+          <span>Backup Data</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Overlay for Mobile Sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+      
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="btn-hamburger" id="hamburgerBtn" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="topbar-breadcrumb">
+            <span class="system-time" id="systemDateDisplay">Oct 01, 2026</span>
+            <span class="breadcrumb-divider">/</span>
+            <span class="active-page-title" id="activePageTitle">Dashboard</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="quick-status-chip" id="topAttendanceChip" title="Overall Attendance">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Avg. Attd: <strong id="topbarAvgAttendance">0%</strong></span>
+          </div>
+          <button class="btn-quick-add" id="topbarQuickAddBtn" title="Quick Add">
+            <i class="fa-solid fa-plus"></i>
+            <span>Quick Action</span>
+          </button>
+          <div class="topbar-profile" id="topbarProfileTrigger" title="Go to Profile">
+            <div class="avatar-circle" id="topbarAvatar">AS</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area with Dynamic Views -->
+      <main class="content-container">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="dashboard" class="page-view active">
+          <div class="dashboard-hero">
+            <div class="hero-text">
+              <span class="hero-badge"><i class="fa-solid fa-code"></i> B.Tech Computer Science & Engineering</span>
+              <h1>Welcome back, <span id="heroStudentName">Aarav</span> 👋</h1>
+              <p>Keep your momentum high! Here is your academic snapshot for <span id="heroSem">Semester 5</span>.</p>
+            </div>
+            <div class="hero-stats-banner">
+              <div class="progress-ring-card">
+                <div class="stat-meta">
+                  <span class="stat-label">Semester Health</span>
+                  <h3 id="overallHealthScore">88%</h3>
+                  <small>Based on attendance & assignments</small>
+                </div>
+                <div class="meter-bar-container">
+                  <div class="meter-fill" id="overallHealthBar" style="width: 88%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card" data-card="subjects">
+              <div class="stat-icon bg-indigo"><i class="fa-solid fa-book"></i></div>
+              <div class="stat-details">
+                <span class="stat-title">Total Subjects</span>
+                <h2 id="dashTotalSubjects">0</h2>
+                <span class="stat-sub" id="dashTotalCredits">0 Credits Total</span>
+              </div>
+            </div>
+
+            <div class="stat-card" data-card="assignments">
+              <div class="stat-icon bg-amber"><i class="fa-solid fa-clock"></i></div>
+              <div class="stat-details">
+                <span class="stat-title">Pending Tasks</span>
+                <h2 id="dashPendingAssignments">0</h2>
+                <span class="stat-sub text-danger" id="dashOverdueAssignments">0 Overdue</span>
+              </div>
+            </div>
+
+            <div class="stat-card" data-card="exams">
+              <div class="stat-icon bg-rose"><i class="fa-solid fa-stopwatch"></i></div>
+              <div class="stat-details">
+                <span class="stat-title">Upcoming Exams</span>
+                <h2 id="dashUpcomingExams">0</h2>
+                <span class="stat-sub text-primary" id="dashNearestExam">None scheduled</span>
+              </div>
+            </div>
+
+            <div class="stat-card" data-card="study">
+              <div class="stat-icon bg-emerald"><i class="fa-solid fa-bullseye"></i></div>
+              <div class="stat-details">
+                <span class="stat-title">Today's Study Goal</span>
+                <h2 id="dashStudyProgress">0%</h2>
+                <span class="stat-sub" id="dashStudySummary">0 of 0 tasks done</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid-layout">
+            <div class="dash-column">
+              <div class="dash-panel">
+                <div class="panel-header">
+                  <div>
+                    <h3><i class="fa-solid fa-flag-checkered text-primary"></i> Priority Deadlines</h3>
+                    <p>Assignments requiring immediate attention</p>
+                  </div>
+                  <a href="#assignments" class="panel-link" data-target="assignments">View All <i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+                <div class="panel-body">
+                  <div class="mini-list" id="dashPriorityAssignmentsList"></div>
+                </div>
+              </div>
+
+              <div class="dash-panel">
+                <div class="panel-header">
+                  <div>
+                    <h3><i class="fa-solid fa-calendar-day text-emerald"></i> Today's Study Schedule</h3>
+                    <p>Check off tasks as you finish them</p>
+                  </div>
+                  <a href="#study-planner" class="panel-link" data-target="study-planner">Planner <i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+                <div class="panel-body">
+                  <div class="study-progress-wrapper mb-3">
+                    <div class="d-flex justify-between text-sm mb-1">
+                      <span>Daily Completion</span>
+                      <strong id="dashStudyBarText">0%</strong>
+                    </div>
+                    <div class="meter-bar-container">
+                      <div class="meter-fill bg-emerald-bar" id="dashDailyStudyBar" style="width: 0%;"></div>
+                    </div>
+                  </div>
+                  <div class="mini-list" id="dashTodayTasksList"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-column">
+              <div class="dash-panel">
+                <div class="panel-header">
+                  <div>
+                    <h3><i class="fa-solid fa-hourglass-half text-rose"></i> Exam Countdown</h3>
+                    <p>Tests & assessments coming up</p>
+                  </div>
+                  <a href="#exams" class="panel-link" data-target="exams">Schedule <i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+                <div class="panel-body">
+                  <div class="mini-list" id="dashUpcomingExamsList"></div>
+                </div>
+              </div>
+
+              <div class="dash-panel">
+                <div class="panel-header">
+                  <div>
+                    <h3><i class="fa-solid fa-user-shield text-amber"></i> Attendance Tracker Status</h3>
+                    <p>75% Minimum Criteria Compliance</p>
+                  </div>
+                  <a href="#attendance" class="panel-link" data-target="attendance">Tracker <i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+                <div class="panel-body">
+                  <div id="dashAttendanceStatusContainer"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. SUBJECTS MANAGEMENT VIEW -->
+        <section id="subjects" class="page-view">
+          <div class="view-header">
+            <div>
+              <h2>Subject Management</h2>
+              <p>Manage your semester course curriculum, teachers, credits, and target attendance.</p>
+            </div>
+            <button class="btn btn-primary" id="openAddSubjectModalBtn">
+              <i class="fa-solid fa-plus"></i> Add New Subject
+            </button>
+          </div>
+
+          <div class="filter-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="subjectSearchInput" placeholder="Search by subject name or code (e.g. CS501)...">
+            </div>
+            <div class="filter-select-group">
+              <select id="subjectCreditFilter" class="custom-select">
+                <option value="all">All Credits</option>
+                <option value="4">4 Credits</option>
+                <option value="3">3 Credits</option>
+                <option value="2">2 Credits (Lab/Practical)</option>
+                <option value="1">1 Credit</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cards-grid" id="subjectsContainer"></div>
+        </section>
+
+        <!-- 3. ATTENDANCE TRACKER VIEW -->
+        <section id="attendance" class="page-view">
+          <div class="view-header">
+            <div>
+              <h2>Attendance Tracker</h2>
+              <p>Maintain your 75% attendance criteria. Use smart predictions to know safe bunks or required classes.</p>
+            </div>
+            <button class="btn btn-primary" id="openAddAttendanceModalBtn">
+              <i class="fa-solid fa-plus"></i> Record / Adjust Subject
+            </button>
+          </div>
+
+          <div class="attendance-summary-banner">
+            <div class="summary-metric">
+              <span class="label">Total Lectures</span>
+              <h3 id="attTotalClasses">0</h3>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-metric">
+              <span class="label">Total Attended</span>
+              <h3 id="attAttendedClasses" class="text-emerald">0</h3>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-metric">
+              <span class="label">Aggregate Attendance</span>
+              <h3 id="attOverallPercent">0.0%</h3>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-metric">
+              <span class="label">Subjects At Risk (&lt;75%)</span>
+              <h3 id="attShortageCount" class="text-danger">0</h3>
+            </div>
+          </div>
+
+          <div class="compliance-alert-box" id="attendanceAlertNotice">
+            <i class="fa-solid fa-circle-info"></i>
+            <div class="alert-content">
+              <strong>College Attendance Rule:</strong> Most universities enforce a mandatory 75% minimum attendance rule to appear in semester end-term examinations.
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-responsive">
+              <table class="data-table" id="attendanceTable">
+                <thead>
+                  <tr>
+                    <th>Subject & Code</th>
+                    <th>Attended / Total</th>
+                    <th>Percentage</th>
+                    <th>Status</th>
+                    <th>Smart Analysis (75% Rule)</th>
+                    <th>Quick Log</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. ASSIGNMENT TRACKER VIEW -->
+        <section id="assignments" class="page-view">
+          <div class="view-header">
+            <div>
+              <h2>Assignment & Project Tracker</h2>
+              <p>Keep track of laboratory submissions, tutorials, and semester project milestones.</p>
+            </div>
+            <button class="btn btn-primary" id="openAddAssignmentModalBtn">
+              <i class="fa-solid fa-plus"></i> Add Assignment
+            </button>
+          </div>
+
+          <div class="filter-toolbar">
+            <div class="status-tab-group" id="assignmentStatusTabs">
+              <button class="tab-pill active" data-filter="all">All (<span id="countAllAssignments">0</span>)</button>
+              <button class="tab-pill" data-filter="pending">Pending (<span id="countPendingAssignments">0</span>)</button>
+              <button class="tab-pill" data-filter="completed">Completed (<span id="countCompletedAssignments">0</span>)</button>
+              <button class="tab-pill text-danger" data-filter="overdue">Overdue (<span id="countOverdueAssignments">0</span>)</button>
+            </div>
+            <div class="filter-controls-right">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="assignmentSearchInput" placeholder="Search assignment title...">
+              </div>
+              <select id="assignmentSubjectFilter" class="custom-select">
+                <option value="all">All Subjects</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-responsive">
+              <table class="data-table" id="assignmentsTable">
+                <thead>
+                  <tr>
+                    <th style="width: 40px;">Done</th>
+                    <th>Assignment Title</th>
+                    <th>Subject</th>
+                    <th>Due Date</th>
+                    <th>Remaining</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="assignmentsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. STUDY PLANNER VIEW -->
+        <section id="study-planner" class="page-view">
+          <div class="view-header">
+            <div>
+              <h2>Daily & Weekly Study Planner</h2>
+              <p>Organize your daily study sessions, revisions, and coding practice.</p>
+            </div>
+            <button class="btn btn-primary" id="openAddStudyTaskModalBtn">
+              <i class="fa-solid fa-plus"></i> Add Study Task
+            </button>
+          </div>
+
+          <div class="study-planner-header-bar">
+            <div class="date-selector-group">
+              <label for="studyPlannerDateFilter"><i class="fa-solid fa-calendar"></i> Select Date:</label>
+              <input type="date" id="studyPlannerDateFilter" class="custom-date-input">
+              <button class="btn btn-secondary btn-sm" id="btnStudySetToday">Today</button>
+              <button class="btn btn-secondary btn-sm" id="btnStudySetTomorrow">Tomorrow</button>
+            </div>
+            <div class="planner-progress-card">
+              <span class="planner-label">Tasks for Selected Day</span>
+              <div class="d-flex align-center gap-2">
+                <div class="meter-bar-container w-160">
+                  <div class="meter-fill bg-emerald-bar" id="studyDayProgressBar" style="width: 0%;"></div>
+                </div>
+                <strong id="studyDayProgressText">0%</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="planner-content-grid">
+            <div class="planner-main-column">
+              <div class="section-card-title">
+                <h3><i class="fa-solid fa-list-ul"></i> Scheduled Study Blocks</h3>
+                <span class="sub-counter" id="studyDayCountBadge">0 tasks scheduled</span>
+              </div>
+              <div class="study-task-cards" id="studyTasksContainer"></div>
+            </div>
+
+            <div class="planner-sidebar-column">
+              <div class="info-card">
+                <h4><i class="fa-solid fa-lightbulb text-amber"></i> CSE Study Strategy</h4>
+                <ul class="tip-list">
+                  <li><strong>Active Coding:</strong> Allocate 45 mins daily to implement core DSA problems.</li>
+                  <li><strong>Spaced Repetition:</strong> Review theoretical topics like OS and DBMS concepts twice a week.</li>
+                  <li><strong>Lab Readiness:</strong> Write code logic in advance before heading into practical sessions.</li>
+                </ul>
+              </div>
+
+              <div class="info-card mt-3">
+                <h4><i class="fa-solid fa-stopwatch text-indigo"></i> 50/10 Pomodoro Method</h4>
+                <p class="text-sm text-muted">Focus intensely on your selected subject for 50 minutes, then take a strict 10-minute break. Studies show 35% higher retention for B.Tech exams.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. EXAM & TEST SECTION VIEW -->
+        <section id="exams" class="page-view">
+          <div class="view-header">
+            <div>
+              <h2>Exams, Mid-Terms & Tests</h2>
+              <p>Track test dates, lab examinations, theory vivas, and room numbers with live countdowns.</p>
+            </div>
+            <button class="btn btn-primary" id="openAddExamModalBtn">
+              <i class="fa-solid fa-plus"></i> Schedule New Exam
+            </button>
+          </div>
+
+          <div class="filter-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="examSearchInput" placeholder="Search exam title or subject...">
+            </div>
+            <select id="examFilterType" class="custom-select">
+              <option value="all">All Assessments</option>
+              <option value="upcoming">Upcoming Only</option>
+              <option value="completed">Completed / Past</option>
+            </select>
+          </div>
+
+          <div class="cards-grid" id="examsContainer"></div>
+        </section>
+
+        <!-- 7. MARKS & CGPA CALCULATOR VIEW -->
+        <section id="marks" class="page-view">
+          <div class="view-header">
+            <div>
+              <h2>Marks & CGPA Calculator</h2>
+              <p>Estimate your semester SGPA, average percentage, and verify your university grading scale.</p>
+            </div>
+            <button class="btn btn-primary" id="openAddMarksModalBtn">
+              <i class="fa-solid fa-plus"></i> Add Subject Marks
+            </button>
+          </div>
+
+          <div class="cgpa-dashboard-card">
+            <div class="cgpa-score-box">
+              <span class="cgpa-eyebrow">Estimated SGPA</span>
+              <h1 id="calculatedCGPA">0.00</h1>
+              <span class="cgpa-scale">on a 10.0 Scale</span>
+            </div>
+            <div class="cgpa-breakdown">
+              <div class="cgpa-metric">
+                <span class="label">Total Marks Scored</span>
+                <h4 id="calcTotalMarks">0 / 0</h4>
+              </div>
+              <div class="cgpa-metric">
+                <span class="label">Overall Percentage</span>
+                <h4 id="calcAvgPercentage">0.0%</h4>
+              </div>
+              <div class="cgpa-metric">
+                <span class="label">Total Credits Calculated</span>
+                <h4 id="calcTotalCredits">0</h4>
+              </div>
+              <div class="cgpa-metric">
+                <span class="label">Grade Classification</span>
+                <h4 id="calcGradeClassification" class="text-emerald">-</h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="disclaimer-banner">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <div>
+              <strong>Grading Calculation Disclaimer:</strong> This estimated SGPA is calculated based on standard UGC/AICTE 10-point relative scale (O: 10, A+: 9, A: 8, B+: 7, B: 6, C: 5, P: 4, F: 0). Official university grading (e.g., AKTU, VTU, Anna University, autonomous institutes) may use relative grading or specific cutoff formulas.
+            </div>
+          </div>
+
+          <div class="table-card mt-3">
+            <div class="table-responsive">
+              <table class="data-table" id="marksTable">
+                <thead>
+                  <tr>
+                    <th>Subject</th>
+                    <th>Credits (C)</th>
+                    <th>Max Marks</th>
+                    <th>Obtained Marks</th>
+                    <th>Percentage</th>
+                    <th>Grade Point (G)</th>
+                    <th>Credit Points (C × G)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="marksTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. NOTES SECTION VIEW -->
+        <section id="notes" class="page-view">
+          <div class="view-header">
+            <div>
+              <h2>Quick Study Notes & Cheatsheets</h2>
+              <p>Store syllabus pointers, code snippets, algorithm summaries, and key formula references.</p>
+            </div>
+            <button class="btn btn-primary" id="openAddNoteModalBtn">
+              <i class="fa-solid fa-plus"></i> Create Note
+            </button>
+          </div>
+
+          <div class="filter-toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="noteSearchInput" placeholder="Search keywords in notes...">
+            </div>
+            <select id="noteSubjectFilter" class="custom-select">
+              <option value="all">All Subjects</option>
+            </select>
+          </div>
+
+          <div class="notes-grid" id="notesContainer"></div>
+        </section>
+
+        <!-- 9. STUDENT PROFILE SECTION VIEW -->
+        <section id="profile" class="page-view">
+          <div class="view-header">
+            <div>
+              <h2>Student Profile & Academic Credentials</h2>
+              <p>View and update your personal information, semester, college, and branch details.</p>
+            </div>
+          </div>
+
+          <div class="profile-layout-grid">
+            <div class="profile-card">
+              <div class="profile-badge-avatar" id="profileLargeAvatar">AS</div>
+              <h2 id="profileDisplayName">Aarav Sharma</h2>
+              <p class="profile-sub" id="profileDisplayRoll">Roll: 21BCSE042</p>
+              <div class="profile-tags">
+                <span class="tag-pill"><i class="fa-solid fa-code"></i> B.Tech CSE</span>
+                <span class="tag-pill" id="profileDisplaySem">Semester 5</span>
+              </div>
+
+              <div class="profile-stats-list">
+                <div class="p-stat-item">
+                  <span>Enrolled Subjects</span>
+                  <strong id="profileSubCount">0</strong>
+                </div>
+                <div class="p-stat-item">
+                  <span>Assignments Finished</span>
+                  <strong id="profileAssgnDone">0</strong>
+                </div>
+                <div class="p-stat-item">
+                  <span>Current Attendance</span>
+                  <strong id="profileAttdPct">0%</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-form-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-user-pen"></i> Edit Student Information</h3>
+                <p>Changes are saved automatically to your browser's LocalStorage.</p>
+              </div>
+
+              <form id="profileForm" class="styled-form">
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="profName">Full Name *</label>
+                    <input type="text" id="profName" class="form-control" required>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="profEmail">Student Email *</label>
+                    <input type="email" id="profEmail" class="form-control" required>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="profRoll">Roll No / Student ID *</label>
+                    <input type="text" id="profRoll" class="form-control" required>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="profSemester">Current Semester *</label>
+                    <select id="profSemester" class="form-control" required>
+                      <option value="Semester 1">Semester 1</option>
+                      <option value="Semester 2">Semester 2</option>
+                      <option value="Semester 3">Semester 3</option>
+                      <option value="Semester 4">Semester 4</option>
+                      <option value="Semester 5">Semester 5</option>
+                      <option value="Semester 6">Semester 6</option>
+                      <option value="Semester 7">Semester 7</option>
+                      <option value="Semester 8">Semester 8</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="profCourse">Course Program</label>
+                    <input type="text" id="profCourse" class="form-control" value="B.Tech" required>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="profBranch">Branch / Specialization</label>
+                    <input type="text" id="profBranch" class="form-control" value="Computer Science & Engineering" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="profUniversity">College / Institute / University</label>
+                  <input type="text" id="profUniversity" class="form-control" required>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Profile Details
+                  </button>
+                  <button type="button" class="btn btn-secondary" id="btnResetProfileForm">Revert</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="app-footer">
+        <p>B.Tech CSE Student Semester Manager • Developed with HTML5, CSS3 & JavaScript (LocalStorage)</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div class="modal-backdrop" id="subjectModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="subjectModalTitle"><i class="fa-solid fa-book"></i> Add New Subject</h3>
+        <button class="modal-close" data-close="subjectModal">&times;</button>
+      </div>
+      <form id="subjectForm">
+        <input type="hidden" id="subjectFormId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="subjectNameInput">Subject Name *</label>
+            <input type="text" id="subjectNameInput" class="form-control" placeholder="e.g. Database Management Systems" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="subjectCodeInput">Subject Code *</label>
+              <input type="text" id="subjectCodeInput" class="form-control" placeholder="e.g. CS501" required>
+            </div>
+            <div class="form-group col-6">
+              <label for="subjectCreditsInput">Credits *</label>
+              <input type="number" id="subjectCreditsInput" class="form-control" min="1" max="10" value="4" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="subjectTeacherInput">Teacher / Professor Name</label>
+            <input type="text" id="subjectTeacherInput" class="form-control" placeholder="e.g. Dr. Rajesh Verma">
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="subjectAttendedInput">Attended Classes</label>
+              <input type="number" id="subjectAttendedInput" class="form-control" min="0" value="28">
+            </div>
+            <div class="form-group col-6">
+              <label for="subjectTotalInput">Total Classes</label>
+              <input type="number" id="subjectTotalInput" class="form-control" min="0" value="32">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="subjectModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="assignmentModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="assignmentModalTitle"><i class="fa-solid fa-list-check"></i> Add Assignment</h3>
+        <button class="modal-close" data-close="assignmentModal">&times;</button>
+      </div>
+      <form id="assignmentForm">
+        <input type="hidden" id="assignmentFormId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="assignmentTitleInput">Assignment Title *</label>
+            <input type="text" id="assignmentTitleInput" class="form-control" placeholder="e.g. SQL Queries and Normalization Assignment 2" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="assignmentSubjectSelect">Subject *</label>
+              <select id="assignmentSubjectSelect" class="form-control" required></select>
+            </div>
+            <div class="form-group col-6">
+              <label for="assignmentDueDateInput">Due Date *</label>
+              <input type="date" id="assignmentDueDateInput" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="assignmentStatusSelect">Status</label>
+              <select id="assignmentStatusSelect" class="form-control">
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="assignmentPrioritySelect">Priority</label>
+              <select id="assignmentPrioritySelect" class="form-control">
+                <option value="Normal">Normal</option>
+                <option value="High">High Priority</option>
+                <option value="Urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="assignmentDescInput">Submission Notes / Requirements</label>
+            <textarea id="assignmentDescInput" class="form-control" rows="2" placeholder="e.g. Submit PDF on LMS portal and print out code results."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="assignmentModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Assignment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="studyTaskModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="studyTaskModalTitle"><i class="fa-solid fa-calendar-check"></i> Add Study Task</h3>
+        <button class="modal-close" data-close="studyTaskModal">&times;</button>
+      </div>
+      <form id="studyTaskForm">
+        <input type="hidden" id="studyTaskFormId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="studyTaskTitleInput">Topic / Task Title *</label>
+            <input type="text" id="studyTaskTitleInput" class="form-control" placeholder="e.g. Practice B-Trees and AVL Trees insertion" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="studyTaskSubjectSelect">Subject *</label>
+              <select id="studyTaskSubjectSelect" class="form-control" required></select>
+            </div>
+            <div class="form-group col-6">
+              <label for="studyTaskDateInput">Date *</label>
+              <input type="date" id="studyTaskDateInput" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="studyTaskTimeInput">Scheduled Time</label>
+              <input type="time" id="studyTaskTimeInput" class="form-control" value="18:00">
+            </div>
+            <div class="form-group col-6">
+              <label for="studyTaskDurationInput">Target Duration (Minutes)</label>
+              <input type="number" id="studyTaskDurationInput" class="form-control" min="15" step="15" value="60">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="studyTaskModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="examModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="examModalTitle"><i class="fa-solid fa-stopwatch"></i> Schedule Exam / Test</h3>
+        <button class="modal-close" data-close="examModal">&times;</button>
+      </div>
+      <form id="examForm">
+        <input type="hidden" id="examFormId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="examNameInput">Exam / Assessment Name *</label>
+            <input type="text" id="examNameInput" class="form-control" placeholder="e.g. Mid-Term 1 Examination" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="examSubjectSelect">Subject *</label>
+              <select id="examSubjectSelect" class="form-control" required></select>
+            </div>
+            <div class="form-group col-6">
+              <label for="examDateInput">Date *</label>
+              <input type="date" id="examDateInput" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="examTimeInput">Exam Time</label>
+              <input type="time" id="examTimeInput" class="form-control" value="10:00">
+            </div>
+            <div class="form-group col-6">
+              <label for="examRoomInput">Room / Hall Number</label>
+              <input type="text" id="examRoomInput" class="form-control" placeholder="e.g. CSE Block LH-302">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="examSyllabusInput">Syllabus Covered / Key Units</label>
+            <textarea id="examSyllabusInput" class="form-control" rows="2" placeholder="e.g. Units 1, 2 and 3 (ER diagrams, Relational Algebra, SQL)"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="examModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Exam</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="marksModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="marksModalTitle"><i class="fa-solid fa-calculator"></i> Add Subject Marks</h3>
+        <button class="modal-close" data-close="marksModal">&times;</button>
+      </div>
+      <form id="marksForm">
+        <input type="hidden" id="marksFormId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="marksSubjectSelect">Subject *</label>
+            <select id="marksSubjectSelect" class="form-control" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-4">
+              <label for="marksCreditsInput">Credits *</label>
+              <input type="number" id="marksCreditsInput" class="form-control" min="1" max="10" value="4" required>
+            </div>
+            <div class="form-group col-4">
+              <label for="marksMaxInput">Max Marks *</label>
+              <input type="number" id="marksMaxInput" class="form-control" min="1" value="100" required>
+            </div>
+            <div class="form-group col-4">
+              <label for="marksObtainedInput">Marks Obtained *</label>
+              <input type="number" id="marksObtainedInput" class="form-control" min="0" step="0.5" value="85" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="marksModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Marks</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="noteModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 id="noteModalTitle"><i class="fa-solid fa-note-sticky"></i> Write Study Note</h3>
+        <button class="modal-close" data-close="noteModal">&times;</button>
+      </div>
+      <form id="noteForm">
+        <input type="hidden" id="noteFormId">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group col-8">
+              <label for="noteTitleInput">Note Title *</label>
+              <input type="text" id="noteTitleInput" class="form-control" placeholder="e.g. ACID Properties & Transaction States" required>
+            </div>
+            <div class="form-group col-4">
+              <label for="noteSubjectSelect">Subject *</label>
+              <select id="noteSubjectSelect" class="form-control" required></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="noteContentInput">Content / Notes / Code Snippets *</label>
+            <textarea id="noteContentInput" class="form-control" rows="9" placeholder="Write your notes here... You can paste summaries, formulas, or code algorithms." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="noteModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Note</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="viewNoteModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 id="viewNoteTitle">Note Title</h3>
+          <span class="sub-counter" id="viewNoteSubject">Subject</span>
+        </div>
+        <button class="modal-close" data-close="viewNoteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="note-full-body" id="viewNoteContent"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close="viewNoteModal">Close</button>
+        <button type="button" class="btn btn-primary" id="btnEditViewedNote"><i class="fa-solid fa-pen"></i> Edit Note</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="attendanceModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-clipboard-user"></i> Adjust Subject Attendance</h3>
+        <button class="modal-close" data-close="attendanceModal">&times;</button>
+      </div>
+      <form id="attendanceForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="attSubjectSelect">Select Subject *</label>
+            <select id="attSubjectSelect" class="form-control" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="attClassesAttended">Classes Attended *</label>
+              <input type="number" id="attClassesAttended" class="form-control" min="0" required>
+            </div>
+            <div class="form-group col-6">
+              <label for="attTotalClassesInput">Total Classes Held *</label>
+              <input type="number" id="attTotalClassesInput" class="form-control" min="1" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="attendanceModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Attendance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
